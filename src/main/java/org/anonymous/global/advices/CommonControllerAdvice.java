@@ -1,9 +1,9 @@
 package org.anonymous.global.advices;
 
 import lombok.RequiredArgsConstructor;
-import onedu.blue.global.exceptions.CommonException;
-import onedu.blue.global.libs.Utils;
-import onedu.blue.global.rests.JSONData;
+import org.anonymous.global.exceptions.CommonException;
+import org.anonymous.global.libs.Utils;
+import org.anonymous.global.rests.JSONData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@RestControllerAdvice("onedu.blue")
+@RestControllerAdvice("org.anonymous")
 public class CommonControllerAdvice {
 
     private final Utils utils;
