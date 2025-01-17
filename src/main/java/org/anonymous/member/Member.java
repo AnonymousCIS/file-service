@@ -1,10 +1,14 @@
 package org.anonymous.member;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.anonymous.member.constants.Authority;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -17,7 +21,16 @@ public class Member implements UserDetails {
 
     private String name;
 
-    private List<Authority> authorities;
+    @JsonAlias("authorities")
+    private List<Authority> _authorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return _authorities == null || _authorities.isEmpty()
+                ? List.of()
+                : _authorities.stream().map( s -> new SimpleGrantedAuthority(s.name())).toList();
+    }
 
     @Override
     public String getPassword() {

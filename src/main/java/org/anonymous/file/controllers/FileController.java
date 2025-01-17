@@ -32,9 +32,8 @@ import java.util.List;
  */
 @Tag(name = "File API", description = "File Upload & Download & 조회 & 삭제")
 @RestController
-@RequestMapping("/api/file")
 @RequiredArgsConstructor
-public class ApiFileController {
+public class FileController {
 
     private final Utils utils;
 

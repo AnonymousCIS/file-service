@@ -2,6 +2,7 @@ package org.anonymous.global.configs;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.anonymous.member.filters.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -19,6 +20,8 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final CorsFilter corsFilter;
+
+    private final LoginFilter loginFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -42,6 +45,7 @@ public class SecurityConfig {
                 // UserName & Password 로 로그인 하는 필터
                 // 항상 UsernamePasswordAuthenticationFilter 앞에 corsFilter & loginFilter 동작해야함
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 // 인증 실패 예외 발생시
                 .exceptionHandling(c -> {
 
