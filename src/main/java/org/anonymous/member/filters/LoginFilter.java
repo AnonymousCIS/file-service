@@ -8,10 +8,14 @@ import jakarta.servlet.ServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.anonymous.global.libs.Utils;
 import org.anonymous.global.rests.JSONData;
+import org.anonymous.member.Member;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -65,7 +69,18 @@ public class LoginFilter extends GenericFilterBean {
 
             ResponseEntity<JSONData> response = restTemplate.exchange(apiUrl, HttpMethod.GET, request, JSONData.class);
 
-            System.out.println(response);
+            JSONData jsonData = response.getBody();
+            if (response.getStatusCode().is2xxSuccessful() && jsonData != null && jsonData.isSuccess()) { // 응답 성공시 처리
+                String json = om.writeValueAsString(jsonData.getData());
+
+                Member member = om.readValue(json, Member.class);
+
+                Authentication authentication = new UsernamePasswordAuthenticationToken(member, null, member.getAuthorities());
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            } // endif
+
 
         } catch (Exception e) { e.printStackTrace(); }
     }
