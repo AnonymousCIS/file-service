@@ -9,6 +9,7 @@ import org.anonymous.file.entities.FileInfo;
 import org.anonymous.file.entities.QFileInfo;
 import org.anonymous.file.exceptions.FileNotFoundException;
 import org.anonymous.file.repositories.FileInfoRepository;
+import org.anonymous.global.libs.Utils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
@@ -37,6 +38,8 @@ public class FileInfoService {
 
     // Context path 추가용
     private final HttpServletRequest request;
+
+    private final Utils utils;
 
     public FileInfo get(Long seq) {
 
@@ -154,7 +157,8 @@ public class FileInfoService {
 
         Long seq = item.getSeq();
         String extension = Objects.requireNonNullElse(item.getExtension(), "");
-        return String.format("%s%s%s/%s", request.getContextPath(), properties.getUrl(), getFolder(seq), seq + extension);
+
+        return utils.getUrl(String.format("%s%s/%s", properties.getUrl(), getFolder(seq), seq + extension));
     }
 
     // StackOverFlow 방지용 단일 조회 분리
