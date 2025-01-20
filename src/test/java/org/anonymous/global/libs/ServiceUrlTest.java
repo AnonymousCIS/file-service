@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-@ActiveProfiles({"default", "test", "dev"})
+@ActiveProfiles({"default", "test", "dev"}) // 테스트
 public class ServiceUrlTest {
 
     @Autowired
