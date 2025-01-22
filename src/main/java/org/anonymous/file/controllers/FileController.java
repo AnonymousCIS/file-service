@@ -66,7 +66,7 @@ public class FileController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/upload")
     public JSONData upload(@RequestPart("file") MultipartFile[] files, @Valid RequestUpload form, Errors errors) {
-
+        // MultipartFile[] files은 이미 정해진 인터페이스임! / 파일이름, 콘텐트타입, 용량등 그런것들
 
         // gid 검증 실패시
         if (errors.hasErrors()) {
@@ -75,7 +75,7 @@ public class FileController {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
 
-        form.setFiles(files);
+        form.setFiles(files); // 이미지를 눌렀을 때 이쪽으로 들어가게 됨.
 
         /**
          * 단일 File Upload

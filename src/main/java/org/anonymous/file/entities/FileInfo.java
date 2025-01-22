@@ -25,6 +25,7 @@ import java.io.Serializable;
 public class FileInfo extends BaseMemberEntity implements Serializable {
 
     // File 등록 번호, 증감 번호
+    // @GeneratedValue 로그인한 회원과 정보가 일치한지 확인
     @Id  @GeneratedValue
     private Long seq;
 
@@ -80,6 +81,7 @@ public class FileInfo extends BaseMemberEntity implements Serializable {
 
     // 이미지 형식 여부
     // ★ Thumbnail 제작은 IMG 로만 해야해서 만든 메서드 ★
+    // contentType이 있으면 그안에 이미지 유무 확인
     public boolean isImage() {
 
         return StringUtils.hasText(contentType) && contentType.contains("image/");
