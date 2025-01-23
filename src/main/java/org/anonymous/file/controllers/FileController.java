@@ -223,4 +223,16 @@ public class FileController {
 
         imageService.select(seq);
     }
+
+    /**
+     * 파일 그룹 업로드 작업 완료 처리
+     *
+     * @param gid
+     * @param location
+     */
+    @GetMapping("/done/{gid}")
+    public void processDone(@PathVariable("gid") String gid, @RequestParam(name = "location", required = false) String location) {
+
+        doneService.process(gid, location);
+    }
 }
