@@ -2,26 +2,27 @@ package org.anonymous.global.advices;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.koreait.global.annotations.ApplyErrorPage;
-import org.koreait.global.entities.SiteConfig;
-import org.koreait.global.exceptions.CommonException;
-import org.koreait.global.exceptions.scripts.AlertBackException;
-import org.koreait.global.exceptions.scripts.AlertException;
-import org.koreait.global.exceptions.scripts.AlertRedirectException;
-import org.koreait.global.libs.Utils;
-import org.koreait.global.services.CodeValueService;
+import org.anonymous.global.entities.SiteConfig;
+import org.anonymous.global.exceptions.CommonException;
+import org.anonymous.global.exceptions.scripts.AlertBackException;
+import org.anonymous.global.exceptions.scripts.AlertException;
+import org.anonymous.global.exceptions.scripts.AlertRedirectException;
+import org.anonymous.global.libs.Utils;
+import org.anonymous.global.services.CodeValueService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@ControllerAdvice(annotations = ApplyErrorPage.class)
+
 @RequiredArgsConstructor
+@RestControllerAdvice("org.anonymous")
 public class CommonControllerAdvice {
+
     private final Utils utils;
     private final CodeValueService codeValueService;
 

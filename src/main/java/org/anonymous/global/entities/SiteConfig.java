@@ -2,7 +2,7 @@ package org.anonymous.global.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.koreait.global.constants.Device;
+import org.anonymous.global.constants.Device;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

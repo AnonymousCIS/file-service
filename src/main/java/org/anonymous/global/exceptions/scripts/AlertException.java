@@ -1,6 +1,6 @@
 package org.anonymous.global.exceptions.scripts;
 
-import org.koreait.global.exceptions.CommonException;
+import org.anonymous.global.exceptions.CommonException;
 import org.springframework.http.HttpStatus;
 
 /**

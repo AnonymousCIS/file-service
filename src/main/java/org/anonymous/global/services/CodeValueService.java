@@ -3,8 +3,8 @@ package org.anonymous.global.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.koreait.global.entities.CodeValue;
-import org.koreait.global.repositories.CodeValueRepository;
+import org.anonymous.global.entities.CodeValue;
+import org.anonymous.global.repositories.CodeValueRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 

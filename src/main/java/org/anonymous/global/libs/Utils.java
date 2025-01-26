@@ -3,12 +3,11 @@ package org.anonymous.global.libs;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.koreait.file.entities.FileInfo;
-import org.koreait.file.services.FileInfoService;
-import org.koreait.global.constants.Device;
-import org.koreait.global.entities.SiteConfig;
-import org.koreait.global.services.CodeValueService;
-import org.koreait.member.libs.MemberUtil;
+import org.anonymous.global.constants.Device;
+import org.anonymous.global.entities.SiteConfig;
+import org.anonymous.global.services.CodeValueService;
+import org.anonymous.member.MemberUtil;
+import org.apache.tomcat.jni.FileInfo;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,7 @@ public class Utils {
 
     private final HttpServletRequest request;
     private final MessageSource messageSource;
-    private final FileInfoService fileInfoService;
+ //   private final FileInfoService fileInfoService;
     private final MemberUtil memberUtil;
     private final CodeValueService codeValueService;
 
