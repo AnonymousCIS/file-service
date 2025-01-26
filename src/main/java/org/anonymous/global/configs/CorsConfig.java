@@ -11,6 +11,11 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Cross Origin Resource Sharing 정책
+ *
+ * 다른 출처간의 자원의 공유 정책
+ */
 @Configuration
 public class CorsConfig {
 
@@ -19,6 +24,7 @@ public class CorsConfig {
 
     @Bean
     public CorsFilter corsFilter() {
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration config = new CorsConfiguration();
@@ -27,12 +33,18 @@ public class CorsConfig {
         config.addAllowedHeader("*");
 
         if (StringUtils.hasText(allowedOrigin)) {
+
             List<String> origins = Arrays.stream(allowedOrigin.split(",")).toList();
+
             config.setAllowedOrigins(origins);
             config.setAllowCredentials(true);
+
         } else {
+
             config.addAllowedOrigin("*");
         }
+
+
 
         source.registerCorsConfiguration("/**", config);
 
