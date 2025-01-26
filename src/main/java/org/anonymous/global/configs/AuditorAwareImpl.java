@@ -1,7 +1,7 @@
 package org.anonymous.global.configs;
 
 import lombok.RequiredArgsConstructor;
-import org.anonymous.member.MemberUtil;
+import org.koreait.member.libs.MemberUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;

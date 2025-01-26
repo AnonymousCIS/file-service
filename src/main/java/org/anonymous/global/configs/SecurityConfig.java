@@ -1,78 +1,88 @@
 package org.anonymous.global.configs;
 
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.anonymous.member.filters.LoginFilter;
+import org.koreait.member.services.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/**
+ * 스프링 시큐리티 설정
+ *
+ */
 @Configuration
-@EnableWebSecurity // 기본 보안 정책 활성화 - 비정상적인 요청시 밴 등등
-@EnableMethodSecurity // @PreAuthorize, @PrePostEnabled 호라성화, 특정 처리 메서드 단위에서 권한 정책 설정
-@RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final CorsFilter corsFilter;
-
-    private final LoginFilter loginFilter;
+    @Autowired
+    private MemberInfoService memberInfoService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        /* 인증 설정 S - 로그인, 로그아웃 */
+        http.formLogin(c -> {
+           c.loginPage("/member/login") // 로그인 양식을 처리할 주소
+                   .usernameParameter("email")
+                   .passwordParameter("password")
+                   .failureHandler(new LoginFailureHandler())
+                   .successHandler(new LoginSuccessHandler());
+        });
+
+        http.logout(c -> {
+           c.logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
+                   .logoutSuccessUrl("/member/login");
+        });
+        /* 인증 설정 E */
+
+        /* 인가 설정 S - 페이지 접근 통제 */
         /**
-         * Token 인증 방식은 Session 을 사용하지 않기때문에 추가한 설정
-         *
-         * SessionCreationPolicy
-         * - ALWAYS : 서버가 시작 되었을때부터 Session 을 Cookie 에 생성, Session ID 바로 조회 가능
-         * - IF_REQUIRED : Session 이 필요한 시점에 Session 을 Cookie 에 생성 (default 값)
-         * - NEVER : Session 생성 X, 기존 생성된 Session 이 존재하는 경우 사용
-         * - STATELESS : Session 생성 X, 기존 생성된 Session 도 사용 X
+         * authenticated() : 인증받은 사용자만 접근
+         * anonymous() : 인증 받지 않은 사용자만 접근
+         * permitAll() : 모든 사용자가 접근 가능
+         * hasAuthority("권한 명칭") : 하나의 권한을 체크
+         * hasAnyAuthority("권한1", "권한2", ...) : 나열된 권한 중 하나라도 충족하면 접근 가능
+         * ROLE
+         * ROLE_명칭
+         * hasRole("명칭")
+         * hasAnyRole(...)
          */
-        http.csrf(c -> c.disable())
-                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // .addFilterAfter() // 특정 Filter 의 앞에
-                // .addFilterBefore() // 특정 Filter 의 뒤에
-                // .addFilterAt() // 끝에
+        http.authorizeHttpRequests(c -> {
+            c.requestMatchers("/mypage/**", "/message/**").authenticated() // 인증한 회원
+                    .requestMatchers("/member/login", "/member/join", "/member/agree").anonymous() // 미인증 회원
+                    .requestMatchers("/admin/**").hasAnyAuthority("MANAGER", "ADMIN") // 관리자 페이지는 MANAGER, ADMIN 권한
+                    .anyRequest().permitAll(); // 나머지 페이지는 모두 접근 가능
+        });
 
-                // UsernamePasswordAuthenticationFilter (Spring Security 기본)
-                // UserName & Password 로 로그인 하는 필터
-                // 항상 UsernamePasswordAuthenticationFilter 앞에 corsFilter & loginFilter 동작해야함
-                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
-                // 인증 실패 예외 발생시
-                .exceptionHandling(c -> {
+        http.exceptionHandling(c -> {
+            c.authenticationEntryPoint(new MemberAuthenticationExceptionHandler())  // 미로그인시 인가 실패
+                    .accessDeniedHandler(new MemberAccessDeniedHandler()); // 로그인 이후 인가 실패
 
-                    // 미로그인 상태에서 접근한 경우
-                    c.authenticationEntryPoint((req, res, e) -> {
+        });
 
-                       // throw new UnAuthorizedException();
-                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                    });
+        /* 인가 설정 E */
 
-                    // 로그인 후 권한이 없는 경우
-                    c.accessDeniedHandler((req, res, e) -> {
+        /* 자동 로그인 설정 S */
+        http.rememberMe(c -> {
+            c.rememberMeParameter("autoLogin")
+                    .tokenValiditySeconds(60 * 60 * 24 * 30) // 자동 로그인을 유지할 시간, 기본값 14일
+                    .userDetailsService(memberInfoService)
+                    .authenticationSuccessHandler(new LoginSuccessHandler());
+        });
+        /* 자동 로그인 설정 E */
 
-                      // throw new UnAuthorizedException();
-                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                    });
-                })
-                // 미로그인시 접근 가능한 패턴
-                .authorizeHttpRequests( c -> {
+        http.headers(c -> c.frameOptions(o -> o.sameOrigin()));
 
-                      // 관리자 접근 가능 패턴
-                    c.requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                            // 나머지는 아무 인증, 미로그인도 접근 가능
-                            .anyRequest().permitAll();
-                });
-
-        // Security 설정 무력화
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

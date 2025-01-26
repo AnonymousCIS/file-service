@@ -1,66 +1,84 @@
 package org.anonymous.global.advices;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.anonymous.global.exceptions.CommonException;
-import org.anonymous.global.libs.Utils;
-import org.anonymous.global.rests.JSONData;
+import org.koreait.global.annotations.ApplyErrorPage;
+import org.koreait.global.entities.SiteConfig;
+import org.koreait.global.exceptions.CommonException;
+import org.koreait.global.exceptions.scripts.AlertBackException;
+import org.koreait.global.exceptions.scripts.AlertException;
+import org.koreait.global.exceptions.scripts.AlertRedirectException;
+import org.koreait.global.libs.Utils;
+import org.koreait.global.services.CodeValueService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+@ControllerAdvice(annotations = ApplyErrorPage.class)
 @RequiredArgsConstructor
-@RestControllerAdvice("org.anonymous")
 public class CommonControllerAdvice {
-
     private final Utils utils;
+    private final CodeValueService codeValueService;
 
-    // Error 도 항상 동일한 형식(JSONData 형식)
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<JSONData> errorHandler(Exception e) {
+    public ModelAndView errorHandler(Exception e, HttpServletRequest request) {
+        Map<String, Object> data = new HashMap<>();
 
-        // default Error Code = 500
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR; // 기본 응답 코드 500
+        String tpl = "error/error"; // 기본 출력 템플릿
+        String message = e.getMessage();
 
-        // CommonException에서 message를 String, Map으로 했으니 Object
-        Object message = e.getMessage();
+        data.put("method", request.getMethod());
+        data.put("path", request.getContextPath() + request.getRequestURI());
+        data.put("querystring", request.getQueryString());
+        data.put("exception", e);
 
-        // 정의한 예외일 경우 응답코드 get
         if (e instanceof CommonException commonException) {
-
             status = commonException.getStatus();
+            message = commonException.isErrorCode() ? utils.getMessage(message) : message;
 
-            /**
-             * ApiFileController Class 의
-             * if (errors.hasErrors()) {
-             *     throw new BadRequestException(utils.getErrorMessages(errors));
-             * }
-             */
-            Map<String, List<String>> errorMessages = commonException.getErrorMessages();
+            StringBuffer sb = new StringBuffer(2048);
+            if (e instanceof AlertException) {
+                tpl = "common/_execute_script"; // 스크립트를 실행하기 위한 HTML 템플릿
+                sb.append(String.format("alert('%s');", message));
+            }
 
-            if (errorMessages != null) {
+            if (e instanceof AlertBackException backException) {
+                String target = backException.getTarget();
+                sb.append(String.format("%s.history.back();", target));
+            }
 
-                message = errorMessages;
+            if (e instanceof AlertRedirectException redirectException) {
+                String target = redirectException.getTarget();
+                String url = redirectException.getUrl();
+                sb.append(String.format("%s.location.replace('%s');", target, url));
+            }
 
-            } else {
-                // ErrorCode 형태 판별 후 message 조회해서 message 만 뺴내서 반환
-                // message 형태일 경우 message 반환
-                message = commonException.isErrorCode() ? utils.getMessage((String)message) : message;
+            if (!sb.isEmpty()) {
+                data.put("script", sb.toString());
             }
         }
 
-        JSONData data = new JSONData();
+        data.put("status", status.value());
+        data.put("_status", status);
+        data.put("message", message);
 
-        data.setSuccess(false);
-        data.setStatus(status);
-        data.setMessage(message);
+        SiteConfig siteConfig = Objects.requireNonNullElseGet(codeValueService.get("siteConfig", SiteConfig.class), SiteConfig::new);
+        data.put("siteConfig", siteConfig);
+
+        ModelAndView mv = new ModelAndView();
+        mv.setStatus(status);
+        mv.addAllObjects(data);
+        mv.setViewName(tpl);
 
         e.printStackTrace();
 
-        // ★ 응답 Code & Body 상세 설정 ★
-        return ResponseEntity.status(status).body(data);
+        return mv;
     }
 }
