@@ -2,13 +2,11 @@ package org.anonymous.global.advices;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.anonymous.global.entities.SiteConfig;
 import org.anonymous.global.exceptions.CommonException;
 import org.anonymous.global.exceptions.scripts.AlertBackException;
 import org.anonymous.global.exceptions.scripts.AlertException;
 import org.anonymous.global.exceptions.scripts.AlertRedirectException;
 import org.anonymous.global.libs.Utils;
-import org.anonymous.global.services.CodeValueService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,8 +22,6 @@ import java.util.Objects;
 public class CommonControllerAdvice {
 
     private final Utils utils;
-    private final CodeValueService codeValueService;
-
 
     @ExceptionHandler(Exception.class)
     public ModelAndView errorHandler(Exception e, HttpServletRequest request) {

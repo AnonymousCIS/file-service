@@ -87,14 +87,14 @@ public class ApiFileController {
         return data;
     }
 
-    // 파일 다운로드
+    // 파일 다운로드 처리
     @GetMapping("/download/{seq}")
     public void download(@PathVariable("seq") Long seq) {
         downloadService.process(seq);
     }
 
-    // 파일 단일 조회
-    @GetMapping("/info/{seq}")
+    // 파일 정보 단일 조회
+    @GetMapping("/view/{seq}")
     public JSONData info(@PathVariable("seq") Long seq) {
         FileInfo item = infoService.get(seq);
 
@@ -105,7 +105,7 @@ public class ApiFileController {
      * 파일 목록 조회
      * gid, location
      */
-    @GetMapping(path={"/list/{gid}", "/list/{gid}/{location}"})
+    @GetMapping(path={"/list/{gid}/{location}"})
     public JSONData list(@PathVariable("gid") String gid,
                          @PathVariable(name="location", required = false) String location,
                          @RequestParam(name="status", defaultValue = "DONE") FileStatus status) {
@@ -124,6 +124,7 @@ public class ApiFileController {
         return new JSONData(item);
     }
 
+    // 파일 목록 삭제
     @DeleteMapping({"/deletes/{gid}", "/deletes/{gid}/{location}"})
     public JSONData deletes(@PathVariable("gid") String gid,
                             @PathVariable(name="location", required = false) String location) {
@@ -133,6 +134,8 @@ public class ApiFileController {
         return new JSONData(items);
     }
 
+
+    // 썸네일 이미지 생성 처리
     @GetMapping("/thumb")
     public void thumb(RequestThumb form, HttpServletResponse response) {
         String path = thumbnailService.create(form);
@@ -153,6 +156,8 @@ public class ApiFileController {
         } catch (IOException e) {}
     }
 
+
+    // 파일 업로드시 노출되는 이미지 선택 처리
 
     @GetMapping("/select/{seq}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
