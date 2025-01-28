@@ -69,6 +69,9 @@ public class LoginFilter extends GenericFilterBean {
 
             ResponseEntity<JSONData> response = restTemplate.exchange(apiUrl, HttpMethod.GET, request, JSONData.class);
 
+            System.out.println("--------response----------");
+            System.out.println(response);
+
             JSONData jsonData = response.getBody();
             if (response.getStatusCode().is2xxSuccessful() && jsonData != null && jsonData.isSuccess()) { // 응답 성공시 처리
                 String json = om.writeValueAsString(jsonData.getData());
@@ -81,7 +84,9 @@ public class LoginFilter extends GenericFilterBean {
 
             } // endif
 
+            System.out.println(request);
 
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace(); }
     }
 }

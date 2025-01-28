@@ -105,10 +105,11 @@ public class Utils {
     /**
      * 유레카 서버 인스턴스 주소 검색
      *
-     *      spring.profiles.active : dev - localhost 로 되어있는 주소 반환
-     *          - EX) member-service : 최대 두가지만 존재
-     *                                  1) 실 서비스 도메인 주소 2) localhost... (개발용)
-     * @param serviceId
+     *   spring.profiles.active : dev - localhost 로 되어있는 주소 반환
+     *   - EX) member-service : 최대 2가지만 존재
+     *     1) 실 서비스 도메인 주소 2) 개발할때의 localhost...로 된 주소
+     *
+     * @param serviceId // 유레카서버 Application쪽에서 보여지는 이름
      * @param url
      * @return
      */
@@ -116,28 +117,30 @@ public class Utils {
 
         try {
 
-            List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
+            List<ServiceInstance> instances = discoveryClient.getInstances(serviceId); // 유레카에서 해당하는 ID의 Status에 있는 url주소를 찾아줌
 
             String profile = System.getenv("spring.profiles.active");
 
-            // 개발 모드 - localhost 의 Service Url
+            // 개발 모드이면 localhost 의 Service Url을 찾음
             boolean isDev = StringUtils.hasText(profile) && profile.contains("dev");
 
             String serviceUrl = null;
 
             for (ServiceInstance instance : instances) {
-
-                String uri = instance.getUri().toString().toString();
-                if (isDev && uri.contains("localhost")) serviceUrl = uri;
-
-                else if (!isDev && !uri.contains("localhost")) serviceUrl = uri;
+                String uri = instance.getUri().toString();
+                if (isDev && uri.contains("localhost")) {
+                    serviceUrl = uri;
+                } else if (!isDev && !uri.contains("localhost")) {
+                    serviceUrl = uri;
+                }
             }
 
             if (StringUtils.hasText(serviceUrl)) {
-
                 return serviceUrl + url;
             }
-        } catch (Exception e) { e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return "";
     }

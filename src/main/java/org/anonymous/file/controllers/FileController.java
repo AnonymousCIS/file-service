@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/file")
 @RequiredArgsConstructor
-public class ApiFileController {
+public class FileController {
 
     private final Utils utils;
 
@@ -164,4 +164,16 @@ public class ApiFileController {
     public void select(@PathVariable("seq") Long seq) {
         imageService.select(seq);
     }
+
+    /**
+     * 파일 그룹작업 완료 처리
+     *
+     * @param gid
+     * @param location
+     */
+    @GetMapping("/done/{gid}")
+    public void processDone(@PathVariable("gid") String gid, @RequestParam(name = "location", required = false) String location) {
+        doneService.process(gid, location);
+    }
+
 }
