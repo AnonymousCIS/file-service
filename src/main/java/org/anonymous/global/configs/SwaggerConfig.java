@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Swagger API 설정관련
  */
-@OpenAPIDefinition(info=@Info(title="파일 API", description = "파일 API 제공"))
+@OpenAPIDefinition(info=@Info(title="파일 API"))
 @Configuration
 public class SwaggerConfig {
     @Bean
