@@ -26,7 +26,6 @@ import java.util.List;
 
 @Tag(name="파일 API", description = "파일 업로드, 조회, 다운로드, 삭제 기능 제공합니다.")
 @RestController
-@RequestMapping("/api/file")
 @RequiredArgsConstructor
 public class FileController {
 

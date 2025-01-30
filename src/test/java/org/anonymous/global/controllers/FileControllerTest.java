@@ -1,28 +1,21 @@
 package org.anonymous.global.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.discovery.converters.Auto;
 import org.anonymous.global.libs.Utils;
-import org.anonymous.global.rests.JSONData;
+import org.anonymous.member.constants.Authority;
+import org.anonymous.member.test.annotations.MockMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
-
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -44,41 +37,11 @@ public class FileControllerTest {
 
     @BeforeEach
     void init() throws Exception {
-        // 회원 가입 시키기
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, String> params = new HashMap<>();
-        params.put("email", "user" + System.currentTimeMillis() + "@test.org");
-        params.put("password", "_aA123456");
-        params.put("confirmPassword", "_aA123456");
-        params.put("userName", "사용자01");
-        params.put("mobile", "01012345678");
-        params.put("agree", "true");
-
-        String jsonParams = om.writeValueAsString(params);
-
-        HttpEntity<String> request = new HttpEntity<>(jsonParams, headers);
-
-        String url = utils.getUrl("/account", "member-service");
-
-        ResponseEntity<Void> response = restTemplate.postForEntity(URI.create(url), request, Void.class);
-        if (response.getStatusCode() == HttpStatus.CREATED) { // 성공
-
-            Map<String, String> params2 = new HashMap<>();
-            params2.put("email", params.get("email"));
-            params2.put("password", params.get("password"));
-            String jsonParams2 = om.writeValueAsString(params2);
-
-            HttpEntity<String> req = new HttpEntity<>(jsonParams2, headers);
-
-            JSONData data = restTemplate.postForObject(URI.create(utils.url("/account/token", "member-service")), req, JSONData.class);
-            token = (String)data.getData();
-        }
 
     }
 
     @Test
+    @MockMember(authority = {Authority.USER, Authority.ADMIN})
     void uploadTest() throws Exception {
         MockMultipartFile file1 = new MockMultipartFile("file", "test1.png", "image/png", "abc".getBytes());
         MockMultipartFile file2 = new MockMultipartFile("file", "test2.png", "image/png", "abc".getBytes());
