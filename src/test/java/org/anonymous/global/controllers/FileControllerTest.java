@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.anonymous.global.libs.Utils;
 import org.anonymous.member.constants.Authority;
 import org.anonymous.member.test.annotations.MockMember;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,10 +34,10 @@ public class FileControllerTest {
 
     private String token;
 
-    @BeforeEach
-    void init() throws Exception {
-
-    }
+//    @BeforeEach
+//    void init() throws Exception {
+//
+//    }
 
     @Test
     @MockMember(authority = {Authority.USER, Authority.ADMIN})
