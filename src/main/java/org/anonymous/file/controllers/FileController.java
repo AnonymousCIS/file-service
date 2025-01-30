@@ -45,9 +45,12 @@ public class FileController {
     @Operation(summary = "파일 업로드 처리")
     @ApiResponse(responseCode = "201", description = "파일 업로드 성공시에는 업로드 완료된 파일 목록이 반환됩니다. 요청시 반드시 요청헤더에 multipart/form-data 형식으로 전송")
     @Parameters({
-            @Parameter(name="gid", description = "파일 그룹 ID", required = true),
-            @Parameter(name="location", description = "파일 그룹 내에서 위치 코드"),
-            @Parameter(name="file", description = "업로드 파일, 복수개 전송 가능", required = true)
+            @Parameter(name="file", required = true,  description = "업로드할 파일 목록"),
+            @Parameter(name="gid", required = true, description = "그룹 ID"),
+            @Parameter(name="location", example="editor", description = "파일 구분 위치"),
+            @Parameter(name="imageOnly", example="true", description = "이미지만 업로드 허용 여부"),
+            @Parameter(name="single", example="true", description = "단일 파일 업로드 여부"),
+            @Parameter(name="done", example="true", description = "업로드 하자마자 그룹 작업 완료 처리")
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/upload")
