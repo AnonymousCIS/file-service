@@ -43,7 +43,7 @@ public class FileController {
      *
      */
     @Operation(summary = "파일 업로드 처리")
-    @ApiResponse(responseCode = "201", description = "파일 업로드 성공시에는 업로드 완료된 파일 목록이 반환됩니다. 요청시 반드시 요청헤더에 multipart/form-data 형식으로 전송")
+    @ApiResponse(description = "파일 업로드 성공시에는 업로드 완료된 파일 목록이 반환됩니다. 요청시 반드시 요청헤더에 multipart/form-data 형식으로 전송")
     @Parameters({
             @Parameter(name="file", required = true,  description = "업로드할 파일 목록"),
             @Parameter(name="gid", required = true, description = "그룹 ID"),
@@ -84,7 +84,7 @@ public class FileController {
 
     // 파일 다운로드 처리
     @Operation(summary = "파일 다운로드 처리")
-    @ApiResponse(responseCode = "200")
+//    @ApiResponse(responseCode = "200")
     @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
     @GetMapping("/download/{seq}")
@@ -109,7 +109,7 @@ public class FileController {
      * gid, location
      */
     @Operation(summary = "파일 목록 조회 - gid(그룹ID), location")
-    @ApiResponse(responseCode = "200", description = "그룹 ID(gid)와 파일 구분 위치(location)으로 파일 목록 조회, location은 gid에 종속되는 검색 조건")
+    @ApiResponse(description = "그룹 ID(gid)와 파일 구분 위치(location)으로 파일 목록 조회, location은 gid에 종속되는 검색 조건")
     @Parameters({
             @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
             @Parameter(name="location", description = "파일 구분 위치")
@@ -127,7 +127,7 @@ public class FileController {
 
     // 파일 단일 삭제
     @Operation(summary = "파일 단일 삭제")
-    @ApiResponse(responseCode = "200", description = "파일 삭제 완료 후 삭제된 파일 정보 반환")
+    @ApiResponse(description = "파일 삭제 완료 후 삭제된 파일 정보 반환")
     @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
     @DeleteMapping("/delete/{seq}")
@@ -140,7 +140,7 @@ public class FileController {
 
     // 파일 목록 삭제
     @Operation(summary = "파일 목록 삭제 - gid(그룹ID), location")
-    @ApiResponse(responseCode = "200", description = "삭제 완료된 파일 목록 반환")
+    @ApiResponse(description = "삭제 완료된 파일 목록 반환")
     @Parameters({
             @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
             @Parameter(name="location", description = "파일 구분 위치")
@@ -158,7 +158,7 @@ public class FileController {
 
     // 썸네일 이미지 생성 처리
     @Operation(summary = "썸네일 생성")
-    @ApiResponse(responseCode = "200", description = "생성된 이미지 출력")
+    @ApiResponse(description = "생성된 이미지 출력")
     @Parameters({
             @Parameter(name="seq", required = true, description = "파일 등록번호 - seq, url 둘중 하나는 필수"),
             @Parameter(name="url", required = true, description = "파일 URL - seq, url 둘중 하나는 필수"),
@@ -203,7 +203,7 @@ public class FileController {
      * @param location
      */
     @Operation(summary = "파일 그룹 작업 완료 처리", method = "GET")
-    @ApiResponse(responseCode = "200")
+//    @ApiResponse(responseCode = "200")
     @Parameters({
             @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
             @Parameter(name="location", description = "파일 그룹내 위치", example = "editor")
