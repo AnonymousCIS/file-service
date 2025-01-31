@@ -24,135 +24,112 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
 
-/**
- * File 도메인 RestController
- * 
- * 주로 JavaScript 에서 사용하기때문에 REST 사용
- *
- */
-@Tag(name = "File API", description = "File Upload & Download & 조회 & 삭제")
+@Tag(name="파일 API", description = "파일 업로드, 조회, 다운로드, 삭제 기능 제공.")
 @RestController
 @RequiredArgsConstructor
 public class FileController {
 
     private final Utils utils;
-
     private final FileUploadService uploadService;
-
     private final FileDownloadService downloadService;
-
     private final FileInfoService infoService;
-
     private final FileDeleteService deleteService;
-
     private final FileDoneService doneService;
-
     private final ThumbnailService thumbnailService;
-
     private final FileImageService imageService;
 
     /**
-     * File Upload
+     * 파일 업로드
      *
-     * @return data
      */
-    @Operation(summary = "File Upload 처리")
-    @ApiResponse(responseCode = "201", description = "File Upload 처리, 업로드 성공 시에는 업로드 완료된 File 목록 반환, 요청시 반드시 요청 헤더에 multipart/form-data 형식으로 전송")
+    @Operation(summary = "파일 업로드 처리")
+    @ApiResponse(description = "파일 업로드 성공시에는 업로드 완료된 파일 목록이 반환됩니다. 요청시 반드시 요청헤더에 multipart/form-data 형식으로 전송")
     @Parameters({
-            @Parameter(name = "gid", description = "파일 그룹 ID",required = true),
-            @Parameter(name = "location", description = "파일 그룹 내에서 위치 코드"),
-            @Parameter(name = "file", description = "업로드 파일, 복수개 전송 가능", required = true)
+            @Parameter(name="file", required = true,  description = "업로드할 파일 목록"),
+            @Parameter(name="gid", required = true, description = "그룹 ID"),
+            @Parameter(name="location", example="editor", description = "파일 구분 위치"),
+            @Parameter(name="imageOnly", example="true", description = "이미지만 업로드 허용 여부"),
+            @Parameter(name="single", example="true", description = "단일 파일 업로드 여부"),
+            @Parameter(name="done", example="true", description = "업로드 하자마자 그룹 작업 완료 처리")
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/upload")
     public JSONData upload(@RequestPart("file") MultipartFile[] files, @Valid RequestUpload form, Errors errors) {
-
-
-        // gid 검증 실패시
         if (errors.hasErrors()) {
-
-            // 올바른 gid 형식이 아니라서 BadRequest
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
 
         form.setFiles(files);
 
         /**
-         * 단일 File Upload
-         * -> 기존 Upload File 삭제 후 새로 추가 (싱글톤)
+         * 단일 파일 업로드
+         *      - 기 업로드된 파일을 삭제하고 새로 추가
          */
         if (form.isSingle()) {
-
             deleteService.deletes(form.getGid(), form.getLocation());
         }
 
-        // 성공시 업로드한 파일 목록(List) 반환 값으로
-        // ★ 요청한 쪽에서도 후속처리 필요할 경우 할 수 있게 ★
         List<FileInfo> uploadedFiles = uploadService.upload(form);
 
-        // Upload 완료 하자마자 완료 처리 하는 경우
+        // 업로드 완료 하자마자 완료 처리
         if (form.isDone()) {
-
             doneService.process(form.getGid(), form.getLocation());
         }
 
-        // JSONData 처리
         JSONData data = new JSONData(uploadedFiles);
-
         data.setStatus(HttpStatus.CREATED);
 
         return data;
     }
 
-    /**
-     * File Download
-     *
-     * @param seq
-     */
-    @GetMapping("/download/{seq}")
-    // Body에 직접 써야하기때문에 void
-    // @PathVariable("경로변수") URL 경로에서 변경 가능한 부분, Handler Adapter 가 처리
-    public void download(@PathVariable("seq") Long seq) {
+    // 파일 다운로드 처리
+    @Operation(summary = "파일 다운로드 처리")
+//    @ApiResponse(responseCode = "200")
+    @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
+    @GetMapping("/download/{seq}")
+    public void download(@PathVariable("seq") Long seq) {
         downloadService.process(seq);
     }
 
-    /**
-     * File 단일 조회
-     *
-     * @param seq
-     * @return
-     */
-    @GetMapping("/info/{seq}")
-    public JSONData info(@PathVariable("seq") Long seq) {
+    // 파일 정보 단일 조회
+    @Operation(summary = "파일 정보 단일 조회")
+    @ApiResponse(responseCode = "200")
+    @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
+    @GetMapping("/view/{seq}")
+    public JSONData info(@PathVariable("seq") Long seq) {
         FileInfo item = infoService.get(seq);
 
         return new JSONData(item);
     }
 
     /**
-     * File 목록(List) 조회
-     *
-     * @param gid
-     * @param location
-     * @return
+     * 파일 목록 조회
+     * gid, location
      */
-    @GetMapping({"/list/{gid}", "list/{gid}/{location}"})
-    public JSONData list( // gid 는 필수, location, status 는 옵션이라 required = false
-                          @PathVariable("gid") String gid,
-                          @PathVariable(name = "location", required = false) String location, @RequestParam(name = "status", defaultValue = "DONE") FileStatus status) {
+    @Operation(summary = "파일 목록 조회 - gid(그룹ID), location")
+    @ApiResponse(description = "그룹 ID(gid)와 파일 구분 위치(location)으로 파일 목록 조회, location은 gid에 종속되는 검색 조건")
+    @Parameters({
+            @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
+            @Parameter(name="location", description = "파일 구분 위치")
+    })
+
+    @GetMapping(path={"/list/{gid}", "/list/{gid}/{location}"})
+    public JSONData list(@PathVariable("gid") String gid,
+                         @PathVariable(name="location", required = false) String location,
+                         @RequestParam(name="status", defaultValue = "DONE") FileStatus status) {
 
         List<FileInfo> items = infoService.getList(gid, location, status);
 
         return new JSONData(items);
     }
 
-    /**
-     * File 단일 삭제
-     * @param seq
-     * @return
-     */
+    // 파일 단일 삭제
+    @Operation(summary = "파일 단일 삭제")
+    @ApiResponse(description = "파일 삭제 완료 후 삭제된 파일 정보 반환")
+    @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
+
     @DeleteMapping("/delete/{seq}")
     public JSONData delete(@PathVariable("seq") Long seq) {
 
@@ -161,78 +138,79 @@ public class FileController {
         return new JSONData(item);
     }
 
-    /**
-     * File 복수개 삭제
-     * @param gid
-     * @param location
-     * @return
-     */
+    // 파일 목록 삭제
+    @Operation(summary = "파일 목록 삭제 - gid(그룹ID), location")
+    @ApiResponse(description = "삭제 완료된 파일 목록 반환")
+    @Parameters({
+            @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
+            @Parameter(name="location", description = "파일 구분 위치")
+    })
+
     @DeleteMapping({"/deletes/{gid}", "/deletes/{gid}/{location}"})
-    public JSONData deletes( // gid 는 필수, location 은 옵션이라 required = false
-                            @PathVariable("gid") String gid,
-                            @PathVariable(name = "location", required = false) String location) {
+    public JSONData deletes(@PathVariable("gid") String gid,
+                            @PathVariable(name="location", required = false) String location) {
 
         List<FileInfo> items = deleteService.deletes(gid, location);
 
         return new JSONData(items);
     }
 
-    /**
-     * 썸네일 이미지
-     * 커맨드 객체 정의 후
-     */
+
+    // 썸네일 이미지 생성 처리
+    @Operation(summary = "썸네일 생성")
+    @ApiResponse(description = "생성된 이미지 출력")
+    @Parameters({
+            @Parameter(name="seq", required = true, description = "파일 등록번호 - seq, url 둘중 하나는 필수"),
+            @Parameter(name="url", required = true, description = "파일 URL - seq, url 둘중 하나는 필수"),
+            @Parameter(name="width", description = "생성될 이미지 너비, 값이 없다면 기본값 50px로 지정됨"),
+            @Parameter(name="height", description = "생성될 이미지 높이, 값이 없다면 기본값 50px로 지정됨")
+    })
+
     @GetMapping("/thumb")
     public void thumb(RequestThumb form, HttpServletResponse response) {
-
         String path = thumbnailService.create(form);
-
         if (!StringUtils.hasText(path)) {
-
             return;
         }
 
         File file = new File(path);
-
         try (FileInputStream fis = new FileInputStream(file);
              BufferedInputStream bis = new BufferedInputStream(fis)) {
 
-            /**
-             * Browser IMG 출력시
-             * Content Type 명시 필수적!
-             *
-             */
             String contentType = Files.probeContentType(file.toPath());
-
             response.setContentType(contentType);
 
-            // Body 쪽에 써줌
             OutputStream out = response.getOutputStream();
             out.write(bis.readAllBytes());
 
         } catch (IOException e) {}
     }
 
-    /**
-     * 목록 노출 이미지 선택
-     *
-     * @param seq
-     */
+
+    // 파일 업로드시 노출되는 이미지 선택 처리
+    @Operation(summary = "파일 업로드시 노출되는 이미지 선택 처리", description = "")
+
     @GetMapping("/select/{seq}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void select(@PathVariable("seq") Long seq) {
-
         imageService.select(seq);
     }
 
     /**
-     * 파일 그룹 업로드 작업 완료 처리
+     * 파일 그룹작업 완료 처리
      *
      * @param gid
      * @param location
      */
+    @Operation(summary = "파일 그룹 작업 완료 처리", method = "GET")
+    @Parameters({
+            @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
+            @Parameter(name="location", description = "파일 그룹내 위치", example = "editor")
+    })
+
     @GetMapping("/done/{gid}")
     public void processDone(@PathVariable("gid") String gid, @RequestParam(name = "location", required = false) String location) {
-
         doneService.process(gid, location);
     }
+
 }

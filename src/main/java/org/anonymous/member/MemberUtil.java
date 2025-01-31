@@ -18,11 +18,12 @@ public class MemberUtil {
     public boolean isAdmin() {
 
         return isLogin() && getMember().get_authorities().stream().anyMatch(a -> a == Authority.ADMIN);
-    }
+    } // anyMatch == 하나라도 일치하는 항목이 있으면 true반환
 
-    // 현재 로그인한 회원 정보
+    // 로그인한 회원 정보 조회
     public Member getMember() {
 
+        // 사용자 인증 정보
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof Member) {

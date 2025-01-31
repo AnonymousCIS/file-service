@@ -77,38 +77,39 @@ public class Utils {
 
         // 형변환해도 싱글톤 객체
         ResourceBundleMessageSource ms = (ResourceBundleMessageSource) messageSource;
-            // 필드별 Error Code - getFieldErrors()
-            // FieldError = 커맨드 객체 검증 실패 & rejectValue(..)
-            // Collectors.toMap = (Key = 필드명, Value = 메세지)
-            Map<String, List<String>> messages = errors.getFieldErrors()
-                    .stream()
-                    .collect(Collectors.toMap(FieldError::getField, f -> getMessages(f.getCodes()), (v1, v2) -> v2));
-            // v1 = 처음 값, v2 = 마지막에 들어온 값
-            // -> 중복될 경우 마지막 값으로 대체되도록 처리 (put과 유사)
+        // 필드별 Error Code - getFieldErrors()
+        // FieldError = 커맨드 객체 검증 실패 & rejectValue(..)
+        // Collectors.toMap = (Key = 필드명, Value = 메세지)
+        Map<String, List<String>> messages = errors.getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(FieldError::getField, f -> getMessages(f.getCodes()), (v1, v2) -> v2));
+        // v1 = 처음 값, v2 = 마지막에 들어온 값
+        // -> 중복될 경우 마지막 값으로 대체되도록 처리 (put과 유사)
 
-            // 글로벌 Error Code - getGlobalErrors()
-            // GlobalError = reject(..)
-            List<String> gMessages = errors.getGlobalErrors()
-                    .stream()
-                    // flatMap = 중첩된 stream() 펼쳐서 1차원 배열로 변환
-                    .flatMap(o -> getMessages(o.getCodes()).stream())
-                    .toList();
+        // 글로벌 Error Code - getGlobalErrors()
+        // GlobalError = reject(..)
+        List<String> gMessages = errors.getGlobalErrors()
+                .stream()
+                // flatMap = 중첩된 stream() 펼쳐서 1차원 배열로 변환
+                .flatMap(o -> getMessages(o.getCodes()).stream())
+                .toList();
 
-            // Global ErrorCode Field = "global" 으로 임의 고정
-            if (!gMessages.isEmpty()) {
+        // Global ErrorCode Field = "global" 으로 임의 고정
+        if (!gMessages.isEmpty()) {
 
-                messages.put("global", gMessages);
-            }
-            return messages;
+            messages.put("global", gMessages);
+        }
+        return messages;
     }
 
     /**
      * 유레카 서버 인스턴스 주소 검색
      *
-     *      spring.profiles.active : dev - localhost 로 되어있는 주소 반환
-     *          - EX) member-service : 최대 두가지만 존재
-     *                                  1) 실 서비스 도메인 주소 2) localhost... (개발용)
-     * @param serviceId
+     *   spring.profiles.active : dev - localhost 로 되어있는 주소 반환
+     *   - EX) member-service : 최대 2가지만 존재
+     *     1) 실 서비스 도메인 주소 2) 개발할때의 localhost...로 된 주소
+     *
+     * @param serviceId // 유레카서버 Application쪽에서 보여지는 이름
      * @param url
      * @return
      */
@@ -116,28 +117,30 @@ public class Utils {
 
         try {
 
-            List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
+            List<ServiceInstance> instances = discoveryClient.getInstances(serviceId); // 유레카에서 해당하는 ID의 Status에 있는 url주소를 찾아줌
 
             String profile = System.getenv("spring.profiles.active");
 
-            // 개발 모드 - localhost 의 Service Url
+            // 개발 모드이면 localhost 의 Service Url을 찾음
             boolean isDev = StringUtils.hasText(profile) && profile.contains("dev");
 
             String serviceUrl = null;
 
             for (ServiceInstance instance : instances) {
-
-                String uri = instance.getUri().toString().toString();
-                if (isDev && uri.contains("localhost")) serviceUrl = uri;
-
-                else if (!isDev && !uri.contains("localhost")) serviceUrl = uri;
+                String uri = instance.getUri().toString();
+                if (isDev && uri.contains("localhost")) {
+                    serviceUrl = uri;
+                } else if (!isDev && !uri.contains("localhost")) {
+                    serviceUrl = uri;
+                }
             }
 
             if (StringUtils.hasText(serviceUrl)) {
-
                 return serviceUrl + url;
             }
-        } catch (Exception e) { e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return "";
     }

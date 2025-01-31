@@ -11,8 +11,8 @@ import java.util.Optional;
 @Lazy
 @Component
 @RequiredArgsConstructor
-public class AuditorAwareImpl implements AuditorAware<String> {
-
+public class AuditorAwareImpl implements AuditorAware<String> { // String == 이메일
+// 로그인시에는 사용자의 이메일을 가져오는 설정
     private final MemberUtil memberUtil;
 
     @Override

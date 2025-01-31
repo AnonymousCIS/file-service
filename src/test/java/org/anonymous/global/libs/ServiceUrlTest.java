@@ -1,12 +1,14 @@
 package org.anonymous.global.libs;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+@DisplayName("파일서비스 주소가져오는지테스트")
 @SpringBootTest
-@ActiveProfiles({"default", "test", "dev"}) // 테스트 수정1
+@ActiveProfiles({"default", "test", "dev"})
 public class ServiceUrlTest {
 
     @Autowired
@@ -14,10 +16,8 @@ public class ServiceUrlTest {
 
     @Test
     void urlTest() {
-
-        String url = utils.serviceUrl("file-service", "/upload");
-
+        String  url = utils.serviceUrl("file-service", "/upload"); // http://localhost:3002/upload 나옴 / dev로 했을 때
         System.out.println(url);
-
+//        System.out.println("test");
     }
 }
