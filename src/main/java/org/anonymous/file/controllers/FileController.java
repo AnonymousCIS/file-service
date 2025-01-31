@@ -115,7 +115,7 @@ public class FileController {
             @Parameter(name="location", description = "파일 구분 위치")
     })
 
-    @GetMapping(path={"/list/{gid}/{location}"})
+    @GetMapping(path={"/list/{gid}", "/list/{gid}/{location}"})
     public JSONData list(@PathVariable("gid") String gid,
                          @PathVariable(name="location", required = false) String location,
                          @RequestParam(name="status", defaultValue = "DONE") FileStatus status) {
