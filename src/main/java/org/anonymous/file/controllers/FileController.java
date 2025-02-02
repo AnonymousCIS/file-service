@@ -203,7 +203,6 @@ public class FileController {
      * @param location
      */
     @Operation(summary = "파일 그룹 작업 완료 처리", method = "GET")
-//    @ApiResponse(responseCode = "200")
     @Parameters({
             @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
             @Parameter(name="location", description = "파일 그룹내 위치", example = "editor")
