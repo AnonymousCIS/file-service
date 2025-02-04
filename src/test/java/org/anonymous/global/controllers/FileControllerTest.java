@@ -1,5 +1,6 @@
 package org.anonymous.global.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.anonymous.file.entities.FileInfo;
@@ -12,13 +13,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,8 +46,36 @@ public class FileControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+
+
+
     private String token;
 
+// 멤버쪽 토큰 받아올때 필요한 코드
+    //@BeforeEach
+    void init() throws JsonProcessingException {
+
+        Map<String, String> loginForm = new HashMap<>();
+
+        loginForm.put("email", "user01@test.org");
+        loginForm.put("password", "_aA123456");
+
+        restTemplate = new RestTemplate();
+
+        HttpHeaders _headers = new HttpHeaders();
+
+        HttpEntity<Map<String, String>> request = new HttpEntity<>(loginForm, _headers);
+
+        String apiUrl = utils.serviceUrl("member-service", "/login");
+
+        ResponseEntity<JSONData> item = restTemplate.exchange(apiUrl, HttpMethod.POST, request, JSONData.class);
+
+        token = item.getBody().getData().toString();
+
+        // if (StringUtils.hasText(token)) _headers.setBearerAuth(token);
+
+        System.out.println(token);
+    }
 
     @DisplayName("파일 통합 테스트")
     @Test
