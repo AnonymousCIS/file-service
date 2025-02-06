@@ -33,24 +33,27 @@
 
 
 # ERD 작성 (엔티티 관계도)
+<img src="src/main/resources/images/MSA_PROJECT%20-%20FILE_INFO.png" width="140px" height="220px" style="vertical-align: middle;">
+
+
 # FILE_INFO
-| 키  | 논리 | 물리 | 도메인 | 타입 | Length | UNIQUE | NULL허용 | 기본값 |
-|:--:|-----------------------|--------------|---------------|-------|--------|--|------|---|
-| pk | 파일 등록 번호                  | SEQ          | Long          | NUMBER |        |        |
-|    | 파일 그룹                     | GID          | String        | VARCHAR | 45     |        | N      |   |       |
-|    | 그룹 내에서 위치                 | LOCATION     | String        | VARCHAR | 45     |        |        |   |  |
-|    | 업로드시 원 파일명                | FILE_NAME    | String        | VARCHAR | 100    |        | N      |   |       |
-|    | 파일 확장자                    | EXTENSION    | String        | VARCHAR | 30     |         |        |   |       |
-|    | 파일 형식                     | CONTENT_TYPE | String        | VARCHAR      | 30     |        |        |
-|    | URL로 파일 접근할 수 있는 주소       | FILE_URL     | String        |VARCHAR|        |        |        |   |       |
-|    | 파일이 서버에 잇는 경로             | FILE_PATH    | String        |VARCHAR|        |        |        |   |       |
-|    | 썸네일 기본 URL                | THUMB_URL    | String        |VARCHAR|        |        |        |   |       |
-|    | 작업 완료 여부                  | DONE         | Boolean       |     |        |        |        |   |       |
-|    | (노출을 하나만 하는 경우) 대표 이미지 선택 | SELECTED     | Boolean       |     |        |        |        |   |       |
-|    | 정렬 순서 (오름차순)              | LISTORDER    | Long          |    NUMBER |        |        |        |   |       |
-|    | 등록일시                      | CREATEDAT    | LocalDateTime |  DATE     |        |         |        | SYSDATE 
-|    | 수정일시                      | MODIFIEDAT   | LocalDateTime |  DATE     |        |         |        | SYSDATE 
-|    | 삭제일시                      | DELETEDAT    | LocalDateTime |  DATE     |        |         |        | SYSDATE 
+| 키  | 논리 | 물리 | 도메인 | 타입          | Length | UNIQUE | NULL허용 | 기본값 |
+|:--:|-----------------------|--------------|---------------|-------------|--------|--|------|---|
+| pk | 파일 등록 번호                  | SEQ          | Long          | NUMBER      |        |        |
+|    | 파일 그룹                     | GID          | String        | VARCHAR     | 45     |        | N      |   |       |
+|    | 그룹 내에서 위치                 | LOCATION     | String        | VARCHAR     | 45     |        |        |   |  |
+|    | 업로드시 원 파일명                | FILE_NAME    | String        | VARCHAR     | 100    |        | N      |   |       |
+|    | 파일 확장자                    | EXTENSION    | String        | VARCHAR     | 30     |         |        |   |       |
+|    | 파일 형식                     | CONTENT_TYPE | String        | VARCHAR     | 30     |        |        |
+|    | URL로 파일 접근할 수 있는 주소       | FILE_URL     | String        | VARCHAR     |        |        |        |   |       |
+|    | 파일이 서버에 잇는 경로             | FILE_PATH    | String        | VARCHAR     |        |        |        |   |       |
+|    | 썸네일 기본 URL                | THUMB_URL    | String        | VARCHAR     |        |        |        |   |       |
+|    | 작업 완료 여부                  | DONE         | Boolean       | NUMBER(1,0) |        |        |        |   |       |
+|    | (노출을 하나만 하는 경우) 대표 이미지 선택 | SELECTED     | Boolean       |  NUMBER(1,0)     |        |        |        |   |       |
+|    | 정렬 순서 (오름차순)              | LISTORDER    | Long          | NUMBER      |        |        |        |   |       |
+|    | 등록일시                      | CREATEDAT    | LocalDateTime | DATE        |        |         |        | SYSDATE 
+|    | 수정일시                      | MODIFIEDAT   | LocalDateTime | DATE        |        |         |        | SYSDATE 
+|    | 삭제일시                      | DELETEDAT    | LocalDateTime | DATE        |        |         |        | SYSDATE 
 
 
 
