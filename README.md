@@ -50,9 +50,9 @@
 |    | 작업 완료 여부                  | DONE         | Boolean       | NUMBER(1,0) |        |        |        |   |       |
 |    | (노출을 하나만 하는 경우) 대표 이미지 선택 | SELECTED     | Boolean       |  NUMBER(1,0)     |        |        |        |   |       |
 |    | 정렬 순서 (오름차순)              | LIST_ORDER   | Long          | NUMBER      |        |        |        |   |       |
-|    | 등록일시                      | CREATEDAT    | LocalDateTime | DATE        |        |         |        | SYSDATE 
-|    | 수정일시                      | MODIFIEDAT   | LocalDateTime | DATE        |        |         |        | SYSDATE 
-|    | 삭제일시                      | DELETEDAT    | LocalDateTime | DATE        |        |         |        | SYSDATE 
+|    | 등록일시                      | CREATED_AT   | LocalDateTime | TIMESTAMP        |        |         |        | SYSDATE 
+|    | 수정일시                      | MODIFIED_AT  | LocalDateTime | TIMESTAMP        |        |         |        | SYSDATE 
+|    | 삭제일시                      | DELETED_AT   | LocalDateTime | TIMESTAMP        |        |         |        | SYSDATE 
 
 
 
