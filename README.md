@@ -1,6 +1,6 @@
 <p>
   <img src="src/main/resources/images/cis.png" width="40px" height="40px" style="vertical-align: middle;"> 
-  <span style="font-size: 80px; font-weight: bold;">AnonymousCIS 프로젝트 💵</span>
+  <span style="font-size: 50px; font-weight: bold;">AnonymousCIS 프로젝트 💵</span>
 </p>
 
 # 기능 명세서
