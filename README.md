@@ -1,9 +1,11 @@
 <p>
-  <img src="src/main/resources/images/cis.png" width="40px" height="40px" style="vertical-align: middle;"> 
-  <span style="font-size: 50px; font-weight: bold;">AnonymousCIS 프로젝트 💵</span>
+  <img src="src/main/resources/images/cis.png" width="50px" height="50px" style="vertical-align: middle;"> 
+   <span style="font-size: 50px; font-weight: bold;">AnonymousCIS 프로젝트</span>
 </p>
 
 # 기능 명세서
+
+## 🔹 도메인 URL 설계 🔹
 <img src="src/main/resources/images/FILE.png" width="1200px" height="200px" style="vertical-align: middle;">
 
 ## 🔹 관리자 페이지 🔹
@@ -24,11 +26,16 @@
 - 썸네일
 - 파일삭제(파일소유자만 삭제가능하게 통제)
 
+## 🔹 Swagger API 🔹
+- 링크 : http://localhost:3002/swagger-ui/index.html#/
+  <img src="src/main/resources/images/swagger.png" width="1200px" height="300px" style="vertical-align: middle;">
+
+
 # ERD 작성 (엔티티 관계도)
 # FILE_INFO
-| 키  | 논리                        | 물리           | 도메인           | 타입    | Length |UNIQUE | NULL허용 | 기본값 |
-|:--:|---------------------------|--------------|---------------|-------|--------|--|------|---|
-| pk | 파일 등록 번호                  | SEQ          | Long          | NUMBER |        |        |   
+| 키  | 논리 | 물리 | 도메인 | 타입 | Length | UNIQUE | NULL허용 | 기본값 |
+|:--:|-----------------------|--------------|---------------|-------|--------|--|------|---|
+| pk | 파일 등록 번호                  | SEQ          | Long          | NUMBER |        |        |
 |    | 파일 그룹                     | GID          | String        | VARCHAR | 45     |        | N      |   |       |
 |    | 그룹 내에서 위치                 | LOCATION     | String        | VARCHAR | 45     |        |        |   |  |
 |    | 업로드시 원 파일명                | FILE_NAME    | String        | VARCHAR | 100    |        | N      |   |       |
@@ -40,7 +47,6 @@
 |    | 작업 완료 여부                  | DONE         | Boolean       |     |        |        |        |   |       |
 |    | (노출을 하나만 하는 경우) 대표 이미지 선택 | SELECTED     | Boolean       |     |        |        |        |   |       |
 |    | 정렬 순서 (오름차순)              | LISTORDER    | Long          |    NUMBER |        |        |        |   |       |
-|    |                           |              |               |       |        |        |        |   |       |
 |    | 등록일시                      | CREATEDAT    | LocalDateTime |  DATE     |        |         |        | SYSDATE 
 |    | 수정일시                      | MODIFIEDAT   | LocalDateTime |  DATE     |        |         |        | SYSDATE 
 |    | 삭제일시                      | DELETEDAT    | LocalDateTime |  DATE     |        |         |        | SYSDATE 
