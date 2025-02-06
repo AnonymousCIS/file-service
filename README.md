@@ -27,7 +27,8 @@
 - 파일삭제(파일소유자만 삭제가능하게 통제)
 
 ## 🔹 Swagger API 🔹
-- 링크 : http://localhost:3002/swagger-ui/index.html#/
+- 링크 : https://cis-file-service.onedu.blue/apidocs.html
+
   <img src="src/main/resources/images/swagger.png" width="1200px" height="300px" style="vertical-align: middle;">
 
 
