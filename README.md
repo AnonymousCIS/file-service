@@ -1,7 +1,6 @@
-<p>
-  <img src="src/main/resources/images/cis.png" width="50px" height="50px" style="vertical-align: middle;"> 
-   <span style="font-size: 50px; font-weight: bold;">AnonymousCIS 프로젝트</span>
-</p>
+  <img src="src/main/resources/images/logo.png" width="450px" height="450px" style="vertical-align: middle;">
+
+# AnonymousCIS 프로젝트
 
 # 기능 명세서
 
