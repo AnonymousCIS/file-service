@@ -1,8 +1,10 @@
 package org.anonymous.file.controllers;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestThumb {
     private Long seq;
     private String url; // 원격 이미지 URL / Long값의 seq이든 url이든 둘중에 하나는 있어야함
