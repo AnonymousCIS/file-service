@@ -25,14 +25,14 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    @JsonFormat(pattern = "yyyy-MM-DD HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt; // 등록일시
 
     @LastModifiedDate
     @Column(insertable = false)
-    @JsonFormat(pattern = "yyyy-MM-DD HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedAt; // 수정일시
 
-    @JsonFormat(pattern = "yyyy-MM-DD HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt; // 삭제일시
 }
