@@ -26,6 +26,7 @@ import java.util.List;
 
 @Tag(name="파일 API", description = "파일 업로드, 조회, 다운로드, 삭제 기능 제공.")
 @RestController
+@CrossOrigin("*")
 @RequiredArgsConstructor
 public class FileController {
 
