@@ -43,6 +43,9 @@ public class FileInfo extends BaseMemberEntity implements Serializable {
     @Transient
     private String thumbUrl; // 썸네일 기본 URL
 
+    @Transient
+    private String downloadUrl;
+
     private boolean done; // 파일과 연관된 작업이 완료되었는지 여부
 
     private boolean selected; // 노출을 1개 하는 경우 대표 이미지 선택
