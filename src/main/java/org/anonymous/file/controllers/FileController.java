@@ -44,7 +44,8 @@ public class FileController {
      *
      */
     @Operation(summary = "파일 업로드 처리")
-    @ApiResponse(description = "파일 업로드 성공시에는 업로드 완료된 파일 목록이 반환됩니다. 요청시 반드시 요청헤더에 multipart/form-data 형식으로 전송")
+    @ApiResponse(description = "파일 업로드 성공시에는 업로드 완료된 파일 목록이 반환됩니다. 요청시 반드시 요청header에 multipart/form-data 형식으로 전송")
+    @ApiResponse(responseCode = "201", description = "파일 업로드 성공")
     @Parameters({
             @Parameter(name="file", required = true,  description = "업로드할 파일 목록"),
             @Parameter(name="gid", required = true, description = "그룹 ID"),
@@ -85,7 +86,7 @@ public class FileController {
 
     // 파일 다운로드 처리
     @Operation(summary = "파일 다운로드 처리")
-//    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "200")
     @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
     @GetMapping("/download/{seq}")
