@@ -86,7 +86,7 @@ public class FileController {
 
     // 파일 다운로드 처리
     @Operation(summary = "파일 다운로드 처리")
-    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "200", description = "요청 성공")
     @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
     @GetMapping("/download/{seq}")
@@ -96,7 +96,7 @@ public class FileController {
 
     // 파일 정보 단일 조회
     @Operation(summary = "파일 정보 단일 조회")
-    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "200", description = "요청 성공")
     @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
     @GetMapping("/view/{seq}")
@@ -111,7 +111,7 @@ public class FileController {
      * gid, location
      */
     @Operation(summary = "파일 목록 조회 - gid(그룹ID), location")
-    @ApiResponse(description = "그룹 ID(gid)와 파일 구분 위치(location)으로 파일 목록 조회, location은 gid에 종속되는 검색 조건")
+    @ApiResponse(responseCode = "200", description = "그룹 ID(gid)와 파일 구분 위치(location)으로 파일 목록 조회, location은 gid에 종속되는 검색 조건")
     @Parameters({
             @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
             @Parameter(name="location", description = "파일 구분 위치")
@@ -129,7 +129,7 @@ public class FileController {
 
     // 파일 단일 삭제
     @Operation(summary = "파일 단일 삭제")
-    @ApiResponse(description = "파일 삭제 완료 후 삭제된 파일 정보 반환")
+    @ApiResponse(responseCode = "200", description = "파일 삭제 완료 후 삭제된 파일 정보 반환")
     @Parameter(name="seq", required = true, description = "경로변수, 파일 등록번호")
 
     @DeleteMapping("/delete/{seq}")
@@ -142,7 +142,7 @@ public class FileController {
 
     // 파일 목록 삭제
     @Operation(summary = "파일 목록 삭제 - gid(그룹ID), location")
-    @ApiResponse(description = "삭제 완료된 파일 목록 반환")
+    @ApiResponse(responseCode = "200", description = "삭제 완료된 파일 목록 반환")
     @Parameters({
             @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
             @Parameter(name="location", description = "파일 구분 위치")
@@ -160,7 +160,7 @@ public class FileController {
 
     // 썸네일 이미지 생성 처리
     @Operation(summary = "썸네일 생성")
-    @ApiResponse(description = "생성된 이미지 출력")
+    @ApiResponse(responseCode = "200", description = "생성된 이미지 출력")
     @Parameters({
             @Parameter(name="seq", required = true, description = "파일 등록번호 - seq, url 둘중 하나는 필수"),
             @Parameter(name="url", required = true, description = "파일 URL - seq, url 둘중 하나는 필수"),
@@ -191,7 +191,7 @@ public class FileController {
 
     // 파일 업로드시 노출되는 이미지 선택 처리
     @Operation(summary = "파일 업로드시 노출되는 이미지 선택 처리", description = "")
-
+    @ApiResponse(responseCode = "200", description = "요청성공")
     @GetMapping("/select/{seq}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void select(@PathVariable("seq") Long seq) {
@@ -209,7 +209,7 @@ public class FileController {
             @Parameter(name="gid", required = true, description = "경로변수, 그룹 ID"),
             @Parameter(name="location", description = "파일 그룹내 위치", example = "editor")
     })
-
+    @ApiResponse(responseCode = "200", description = "요청성공")
     @GetMapping("/done/{gid}")
     public void processDone(@PathVariable("gid") String gid, @RequestParam(name = "location", required = false) String location) {
         doneService.process(gid, location);
